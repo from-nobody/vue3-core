@@ -4,7 +4,7 @@ import { effect } from "../effect"
 
 describe('effect', () => {
 
-    it('smooth', () => {
+    it('basic', () => {
         const person = reactive({
             age: 10
         })
@@ -22,5 +22,19 @@ describe('effect', () => {
         person.age++
         
         expect(new_age).toBe(31)
+    })
+
+
+    it('effect return runner function', () => {
+        let count = 0
+        const runner = effect(() => {
+            count++
+            return 'I am a value from effect fn'
+        })
+
+        expect(count).toBe(1)
+        const r = runner()
+        expect(count).toBe(2)
+        expect(r).toBe('I am a value from effect fn')
     })
 })
