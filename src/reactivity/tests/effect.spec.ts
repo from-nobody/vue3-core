@@ -19,8 +19,8 @@ describe('effect', () => {
         expect(new_age).toBe(30)
 
         // update age
-        // person.age++
+        person.age++
         
-        // expect(new_age).toBe(31)
+        expect(new_age).toBe(31)
     })
 })
