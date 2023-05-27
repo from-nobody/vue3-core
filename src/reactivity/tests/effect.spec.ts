@@ -45,7 +45,7 @@ describe('effect', () => {
             run = runner
         }) 
 
-        const obj = { foo: 0 }
+        const obj = reactive({ foo: 0 })
 
         const runner = effect(
             () => {
@@ -58,7 +58,7 @@ describe('effect', () => {
         expect(dummy).toBe(0)
 
         obj.foo++
-        expect(scheduler).toHaveBeenCalledTimes(0)
+        expect(scheduler).toHaveBeenCalledTimes(1)
         expect(dummy).toBe(0)
         
         run()
