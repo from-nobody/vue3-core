@@ -1,5 +1,5 @@
 import { reactive } from "../reactive"
-import { effect } from "../effect"
+import { effect, stop } from "../effect"
 
 
 describe('effect', () => {
@@ -63,5 +63,46 @@ describe('effect', () => {
         
         run()
         expect(dummy).toBe(1)
+    })
+
+    it('stop', () => {
+        let dummy 
+        const obj = reactive({ foo: 0 })
+        
+        const runner = effect(() => {
+            dummy = obj.foo
+        })
+
+        obj.foo = 1
+        expect(dummy).toBe(1)
+
+        stop(runner)
+
+        // effect no working after invoke stop()
+        obj.foo = 2
+        expect(dummy).toBe(1)
+
+        // mannually invoke runner, still get reactive results
+        runner()
+        expect(dummy).toBe(2)
+    })
+
+    it('onStop', () => {
+        let dummy
+        const obj = reactive({ foo: 0 })
+
+        const onStop = jest.fn()
+        
+        const runner = effect(
+            () => {
+                dummy = obj.foo
+            },
+            {
+                onStop
+            }
+        )
+
+        stop(runner)
+        expect(onStop).toBeCalledTimes(1)
     })
 })

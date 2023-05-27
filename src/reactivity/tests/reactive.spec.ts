@@ -2,7 +2,7 @@ import { reactive } from "../reactive"
 
 
 describe('reactive', () => {
-    it('happy path', () => {
+    it('basic', () => {
         const person_origin = {
             name: 'Peter',
             age: 18
@@ -11,6 +11,5 @@ describe('reactive', () => {
         
         expect(person).not.toBe(person_origin)
         expect(person.name).toBe('Peter')
-        
     }) 
 })
