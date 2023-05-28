@@ -1,22 +1,14 @@
-import { track, trigger } from "./effect"
+import { reactiveHandler, readonlyHandler } from "./baseHandler"
 
 export function reactive (target: any) {
-    return new Proxy(target, {
-        get(target, key, receiver) {
-            const res = Reflect.get(target, key, receiver)
+    return createProxiedObject(target, reactiveHandler)
+}
 
-            // deps collection
-            track(target, key)
+export function readonly (target: any) {
+    return createProxiedObject(target, readonlyHandler)
+}
 
-            return res
-        },
-        set(target, key, newValue, receiver) {
-            const res = Reflect.set(target,key,newValue, receiver)
 
-            // deps trigger
-            trigger(target, key)
-
-            return res
-        },
-    })
+function createProxiedObject (raw_object, baseHandler) {
+    return new Proxy(raw_object, baseHandler)
 }
