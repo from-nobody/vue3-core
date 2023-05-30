@@ -1,5 +1,9 @@
 import { extend } from "../share"
 
+
+let activeEffect: any
+let shouldTrack = false
+
 class ReactiveEffect {
 
     private _fn: any
@@ -16,8 +20,16 @@ class ReactiveEffect {
     }
 
     run () {
+        if (!this.active) {
+            return this._fn()
+        }
+
+        shouldTrack = true
         activeEffect = this
-        return this._fn()
+        const result = this._fn()
+        shouldTrack = false
+
+        return result
     }
 
     stop () {
@@ -56,9 +68,11 @@ export function stop (runner) {
 
 
 const targetMap = new WeakMap()
-let activeEffect: any
 
 export function track (target: object, key: string | symbol) {
+
+    if (!isTracking()) return
+
     let depsMap = targetMap.get(target)
     if (!depsMap) {
         depsMap = new Map()
@@ -71,7 +85,7 @@ export function track (target: object, key: string | symbol) {
         depsMap.set(key, dep)
     }
 
-    if (!activeEffect) return
+    if (dep.has(activeEffect)) return
 
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
@@ -90,4 +104,9 @@ export function trigger (target: object, key: string | symbol) {
             }
         });
     }
+}
+
+
+function isTracking () {
+    return shouldTrack && activeEffect !== undefined
 }

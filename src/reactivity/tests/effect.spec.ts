@@ -79,7 +79,8 @@ describe('effect', () => {
         stop(runner)
 
         // effect no working after invoke stop()
-        obj.foo = 2
+        // obj.foo = 2
+        obj.foo++
         expect(dummy).toBe(1)
 
         // mannually invoke runner, still get reactive results
