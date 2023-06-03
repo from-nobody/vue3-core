@@ -34,4 +34,21 @@ describe('redonly', () => {
         expect(isReadonly(proxy)).toBe(true)
         expect(isReadonly(origin)).toBe(false)
     })
+
+    it('deep readonly', () => {
+        const origin = {
+            happy: {
+                haha: 'giggle'
+            },
+            sad: [
+                { sorror: 'cry' }
+            ]
+        }
+
+        const proxied = readonly(origin)
+
+        expect(isReadonly(proxied.happy)).toBe(true)
+        expect(isReadonly(proxied.sad)).toBe(true)
+        expect(isReadonly(proxied.sad[0])).toBe(true)
+    })
 })
