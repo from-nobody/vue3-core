@@ -1,5 +1,6 @@
+import { isObject } from "../share"
 import { track, trigger } from "./effect"
-import { ReactiveFlags } from "./reactive"
+import { ReactiveFlags, reactive, readonly } from "./reactive"
 
 
 const get = createGetter()
@@ -32,6 +33,10 @@ function createGetter (isReadonly: boolean = false) {
         }
 
         const res = Reflect.get(target, key, receiver)
+
+        if (isObject(res)) {
+            return isReadonly ? readonly(res) : reactive(res)
+        }
 
         // deps collection
         if (!isReadonly) {
