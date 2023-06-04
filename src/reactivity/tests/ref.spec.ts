@@ -1,6 +1,6 @@
 import { effect } from "../effect";
 import { reactive } from "../reactive";
-import { ref, isRef, unRef } from "../ref";
+import { ref, isRef, unRef, proxyRefs } from "../ref";
 
 
 describe('ref', () => {
@@ -63,5 +63,29 @@ describe('ref', () => {
 
         expect(unRef(foo)).toBe(800)
         expect(unRef('hello')).toBe('hello')
+    })
+
+    it('proxyRefs', () => {
+        const obj = {
+            count: ref(0),
+            time: 3
+        }
+
+        const proxyObj = proxyRefs(obj)
+
+        expect(obj.count.value).toBe(0)
+        expect(obj.time).toBe(3)
+        expect(proxyObj.count).toBe(0)
+        expect(proxyObj.time).toBe(3)
+
+        proxyObj.count = 100
+
+        expect(proxyObj.count).toBe(100)
+        expect(obj.count.value).toBe(100)
+
+        proxyObj.count = ref(200)
+
+        expect(proxyObj.count).toBe(200)
+        expect(obj.count.value).toBe(200)
     })
 })
