@@ -69,7 +69,7 @@ export function stop (runner) {
 
 const targetMap = new WeakMap()
 
-export function track (target: object, key: string | symbol) {
+export function track (target, key) {
 
     if (!isTracking()) return
 
@@ -85,16 +85,25 @@ export function track (target: object, key: string | symbol) {
         depsMap.set(key, dep)
     }
 
-    if (dep.has(activeEffect)) return
+    trackEffects(dep)
+}
 
+export function trackEffects (dep) {
+    if(!isTracking()) return
+    if (dep.has(activeEffect)) return
     dep.add(activeEffect)
     activeEffect.deps.push(dep)
 }
 
-export function trigger (target: object, key: string | symbol) {
+export function trigger (target, key) {
     const depsMap = targetMap.get(target)
     if (!depsMap) { return }
     const dep = depsMap.get(key)
+
+    triggerEffects(dep)
+}
+
+export function triggerEffects (dep) {
     if (dep) {
         dep.forEach((effect: any) => {
             if (effect.scheduler) {
