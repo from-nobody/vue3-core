@@ -1,4 +1,5 @@
-import { reactiveHandler, readonlyHandler } from "./baseHandler"
+import { extend } from "../share"
+import { reactiveHandler, readonlyHandler, shallowReadonlyHandler } from "./baseHandler"
 
 
 export enum ReactiveFlags {
@@ -15,6 +16,13 @@ export function readonly (target: any) {
     return createProxiedObject(target, readonlyHandler)
 }
 
+export function shallowReadonly (target) {
+    return createProxiedObject(target, extend(
+        {}, 
+        readonlyHandler, 
+        {get: shallowReadonlyHandler.get}
+    ))
+}
 
 export function isReactive (target) {
     return !!target[ReactiveFlags.IS_REACTIVE] 
