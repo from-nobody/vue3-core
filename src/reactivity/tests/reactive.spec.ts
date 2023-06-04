@@ -1,4 +1,4 @@
-import { isReactive, reactive } from "../reactive"
+import { isReactive, reactive, isProxy } from "../reactive"
 
 
 describe('reactive', () => {
@@ -39,5 +39,17 @@ describe('reactive', () => {
         expect(isReactive(proxied.happy)).toBe(true)
         expect(isReactive(proxied.sad)).toBe(true)
         expect(isReactive(proxied.sad[0])).toBe(true)
+    })
+
+    it('isProxy', () => {
+        const origin = {
+            foo: 56,
+            bar: { a: 78 }
+        }
+
+        const proxied = reactive(origin)
+
+        expect(isProxy(proxied)).toBe(true)
+        expect(isProxy(proxied.bar)).toBe(true)
     })
 })
