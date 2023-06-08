@@ -1,3 +1,6 @@
+import { h } from "../../lib/vue-ninja.esm"
+
+
 export default {
     setup () {
         return {
