@@ -1,6 +1,10 @@
-import App from "./App";
+import { createApp } from '../../lib/vue-ninja.esm'
+import App from './App';
 
 
 const app = createApp(App)
 
-app.mount('#app')
+// TODO put this into runtime-core package 
+const rootComponent = document.querySelector('#app')
+
+app.mount(rootComponent)
