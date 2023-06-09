@@ -1,10 +1,9 @@
-import { createApp } from '../../lib/vue-ninja.esm'
-import App from './App';
+import { createApp } from '../../lib/vue-ninja.esm.js'   
+import App from './App.js';
 
-
-const app = createApp(App)
 
 // TODO put this into runtime-core package 
-const rootComponent = document.querySelector('#app')
+const rootContainer = document.querySelector('#app')
 
-app.mount(rootComponent)
+createApp(App).mount(rootContainer)
+

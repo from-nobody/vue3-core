@@ -1,4 +1,4 @@
-import { h } from "../../lib/vue-ninja.esm"
+import { h } from "../../lib/vue-ninja.esm.js"
 
 
 export default {
@@ -9,6 +9,6 @@ export default {
     },
 
     render () {
-        h('div', 'Seriously ' + msg)
+        h('div', 'Seriously ' + this.msg)
     }
 }
