@@ -9,6 +9,16 @@ export default {
     },
 
     render () {
-        h('div', 'Seriously ' + this.msg)
+        return h(
+            'div', 
+            {
+                id: 'root',
+                class: ['cc']
+            }, 
+            [
+                h('div', {id: 'haha', class: ['size']}, 'Orochimaru is a scientist!!'),
+                h('div', {id: 'hehe', class: ['style']}, 'Madara is a fool')
+            ] 
+        )
     }
 }
