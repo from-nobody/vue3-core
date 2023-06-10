@@ -5,3 +5,5 @@ export const isObject = (raw) => {
 }
 
 export const isOnEvent = (key: string) => /^on[A-Z]/.test(key)
+
+export const hasItInside = (val, key) => Object.prototype.hasOwnProperty.call(val, key)
