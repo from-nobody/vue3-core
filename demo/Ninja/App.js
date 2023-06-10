@@ -2,7 +2,7 @@ import { h } from "../../lib/vue-ninja.esm.js"
 import Child from "./Child.js"
 
 export default {
-    name: App,
+    name: 'App',
     setup () {
         return {
             msg: 'Orochimaru is a real scentist!!'
