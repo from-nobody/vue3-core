@@ -1,6 +1,6 @@
 import { h } from "../../lib/vue-ninja.esm.js"
 
-window.self = null
+
 export default {
     setup () {
         return {
@@ -9,12 +9,15 @@ export default {
     },
 
     render () {
-        window.self = this
         return h(
             'div', 
             {
                 id: 'root',
-                class: ['cc']
+                class: ['cc'],
+                onMousedown: () => {
+                    console.log('down')
+                },
+                onClick: () => { console.log('key down') }
             }, 
             // [
             //     h('div', {id: 'haha', class: ['size']}, 'Orochimaru is a scientist!!'),

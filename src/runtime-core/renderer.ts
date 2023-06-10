@@ -1,4 +1,5 @@
 import { ShapeFlags } from "../share/ShapeFlags"
+import { isOnEvent } from "../share/index"
 import { createComponentInstance, setupComponent } from "./component"
 
 
@@ -27,8 +28,15 @@ function mountElement (vnode, container) {
     // set props
     for (const key in props) {
         if (Object.prototype.hasOwnProperty.call(props, key)) {
-            const attrs = props[key]
-            el.setAttribute(key, attrs)
+
+            const val = props[key]
+
+            if (isOnEvent(key)) {
+                const event = key.slice(2).toLowerCase()
+                el.addEventListener(event, val)
+            } else {
+                el.setAttribute(key, val)
+            }
         }
     }
 
