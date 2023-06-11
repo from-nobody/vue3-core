@@ -1,10 +1,11 @@
-import { h, createTextVNode } from "../../lib/vue-ninja.esm.js"
+import { h, createTextVNode, getCurrentInstance } from "../../lib/vue-ninja.esm.js"
 import Bar from './Bar.js'
 
 export default {
     name: 'App',
     setup () {
-
+        const ins = getCurrentInstance()
+        console.log('App: ', ins)
     },
 
     render () {
@@ -22,7 +23,7 @@ export default {
             'div',
             {},
             // [ h('div',{},'App'), h(Bar, {}, slotNode_1) ]
-            [ h('div',{},'App'), h(Bar, {}, slotsObject) ]
+            [ h('div',{},'App'), h(Bar, {msg: 'kkk'}, slotsObject) ]
         )
     }
 }

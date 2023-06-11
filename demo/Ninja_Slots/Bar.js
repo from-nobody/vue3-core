@@ -1,13 +1,13 @@
-import { h, renderSlots } from "../../lib/vue-ninja.esm.js"
+import { h, renderSlots, getCurrentInstance } from "../../lib/vue-ninja.esm.js"
 
 
 export default {
     setup () {
-
+        const ins = getCurrentInstance()
+        console.log('Bar: ', ins)
     },
 
     render () {
-        console.log(this.$slots)
         const msg = ' hello'
 
         // const slots = renderSlots(this.$slots)
