@@ -1,7 +1,8 @@
 import { hasItInside } from "../share/index"
 
 const publicPropsMap = {
-    $el: (ins) => ins.vnode.el
+    $el: (ins) => ins.vnode.el,
+    $slots: (ins) => ins.slots
     // TODO $data/$props/...
 }
 
