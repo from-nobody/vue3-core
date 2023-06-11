@@ -5,14 +5,17 @@ import { emit } from "./componentEmit"
 import { initSlots } from "./componentSlots"
 
 
-export function createComponentInstance (vnode) {
+export function createComponentInstance (vnode, parent) {
+    console.log('copm: ', parent)
     const instance = {
         vnode,
         type: vnode.type,
         setupState: {},
         props: {},
         emit: () => {},
-        slots: {}
+        slots: {},
+        providers: {},
+        parent
     }
 
     instance.emit = emit.bind(null, instance) as any
