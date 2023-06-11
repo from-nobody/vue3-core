@@ -1,6 +1,7 @@
 import { ShapeFlags } from "../share/ShapeFlags"
 import { isOnEvent } from "../share/index"
 import { createComponentInstance, setupComponent } from "./component"
+import { Fragment } from "./vnode"
 
 
 export function render (vnode, container) {
@@ -8,11 +9,25 @@ export function render (vnode, container) {
 }
 
 function patch (vnode, container) {
-    if (vnode.shapeFlags & ShapeFlags.ELEMENT) {        // vnode type is an element (string)
-        processElement(vnode, container)
-    } else if (vnode.shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {        // vnode type is a component (object)
-        processComponent(vnode, container)
+    const { type, shapeFlags } = vnode
+
+    switch (type) {
+        case Fragment:                                  // avoid rendering wrapper div of slots children node 
+            processFragment(vnode, container)
+            break
+
+        default: 
+            if (shapeFlags & ShapeFlags.ELEMENT) {        // vnode type is an element (string)
+                processElement(vnode, container)
+            } else if (shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {        // vnode type is a component (object)
+                processComponent(vnode, container)
+            }
+            break
     }
+}
+
+function processFragment (vnode, container) {
+    mountChildren(vnode.children, container)
 }
 
 function processElement (vnode, container) {
