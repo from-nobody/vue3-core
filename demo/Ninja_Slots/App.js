@@ -1,4 +1,4 @@
-import { h } from "../../lib/vue-ninja.esm.js"
+import { h, createTextVNode } from "../../lib/vue-ninja.esm.js"
 import Bar from './Bar.js'
 
 export default {
@@ -14,7 +14,7 @@ export default {
 
         // const slotsArray = [slotNode_1, slotNode_2]
         const slotsObject = {
-            header: ({msg}) => h('p',{},'slot111' + msg),
+            header: ({msg}) => [ h('p',{},'slot111' + msg), createTextVNode('Hello from the outside!!') ],
             footer: ({msg}) => h('p',{}, 'slot222' + msg)
         }
     
