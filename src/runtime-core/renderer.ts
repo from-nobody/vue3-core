@@ -1,67 +1,103 @@
+import { ShapeFlags } from "../share/ShapeFlags"
+import { isOnEvent } from "../share/index"
 import { createComponentInstance, setupComponent } from "./component"
+import { Fragment, Text } from "./vnode"
 
 
-export function render (vnode, container) {
-    patch(vnode, container)
+export function render (vnode, container, parentCcomponent) {
+    patch(vnode, container, parentCcomponent)
 }
 
-function patch (vnode, container) {
-    if (typeof vnode.type === 'string') {
-        processElement(vnode, container)
-    } else if (typeof vnode.type === 'object') {            
-        processComponent(vnode, container)
+function patch (vnode, container, parentCcomponent) {
+    const { type, shapeFlags } = vnode
+
+    switch (type) {
+        case Fragment:                                  // avoid rendering wrapper div of slots children node 
+            processFragment(vnode, container, parentCcomponent)
+            break
+
+        case Text: 
+            processText(vnode, container)
+            break
+
+        default: 
+            if (shapeFlags & ShapeFlags.ELEMENT) {        // vnode type is an element (string)
+                processElement(vnode, container, parentCcomponent)
+            } else if (shapeFlags & ShapeFlags.STATEFUL_COMPONENT) {        // vnode type is a component (object)
+                processComponent(vnode, container, parentCcomponent)
+            }
+            break
     }
 }
 
-function processElement (vnode, container) {
-    mountElement(vnode, container)
+function processFragment (vnode, container, parentCcomponent) {
+    mountChildren(vnode.children, container, parentCcomponent)
 }
 
-function mountElement (vnode, container) { 
-    const { type, props, children } = vnode
+function processText (vnode, container) {
+    const { children } = vnode      // children must be a text node
+    const text_node = document.createTextNode(children)
+    container.append(text_node)
+}
+
+function processElement (vnode, container, parentCcomponent) {
+    mountElement(vnode, container, parentCcomponent)
+}
+
+function mountElement (vnode, container, parentCcomponent) { 
+    const { type, props, children, shapeFlags } = vnode
     
     //  get element 
-    const el = document.createElement(type)
+    const el = (vnode.el = document.createElement(type))
 
     // set props
     for (const key in props) {
         if (Object.prototype.hasOwnProperty.call(props, key)) {
-            const attrs = props[key]
-            el.setAttribute(key, attrs)
+
+            const val = props[key]
+
+            if (isOnEvent(key)) {
+                const event = key.slice(2).toLowerCase()
+                el.addEventListener(event, val)
+            } else {
+                el.setAttribute(key, val)
+            }
         }
     }
 
     // handle children
-    if (typeof children === 'string') {
+    if (shapeFlags & ShapeFlags.TEXT_CHILDREN) {
         el.textContent = children
-    } else if (Array.isArray(children)) {
-        mountChildren(children, el)
+    } else if (shapeFlags & ShapeFlags.ARRAY_CHILDREN) {
+        mountChildren(children, el, parentCcomponent)
     }
     
     // append element
     container.append(el)
 }
 
-function mountChildren (children, parent_container) {
+function mountChildren (children, parent_container, parentCcomponent) {
     children.forEach(item => {
-        patch(item, parent_container)
+        patch(item, parent_container, parentCcomponent)
     })
 }
 
-function processComponent (vnode, container) {
-    mountComponent(vnode, container)
+function processComponent (vnode, container, parentCcomponent) {
+    mountComponent(vnode, container, parentCcomponent)
 }
 
-function mountComponent (vnode, container) {
-    const instance = createComponentInstance(vnode)
+function mountComponent (initialVNode, container, parentCcomponent) {
+    const instance = createComponentInstance(initialVNode, parentCcomponent)
     setupComponent(instance)
-    setupRenderEffect(instance, container)
+    setupRenderEffect(instance, container, initialVNode)
 }
 
-function setupRenderEffect (instance, container) {
+function setupRenderEffect (instance, container, vnode) {
     
     //subTree is a vnode tree returned from the component instance render function 
-    const subTree = instance.render()
+    const subTree = instance.render.call(instance.proxy)
 
-    patch(subTree, container)
+    patch(subTree, container, instance)
+
+    vnode.el = subTree.el
 }

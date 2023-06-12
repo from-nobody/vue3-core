@@ -1,35 +1,67 @@
-export function createComponentInstance (vnode) {
-    const component = {
+import { initProps } from "./componentProps"
+import { publicInstanceProxyHandlers } from "./componentPublicInstance"
+import { shallowReadonly } from "../reactivity/reactive"
+import { emit } from "./componentEmit"
+import { initSlots } from "./componentSlots"
+
+
+export function createComponentInstance (vnode, parent) {
+    console.log('copm: ', parent)
+    const instance = {
         vnode,
-        type: vnode.type
+        type: vnode.type,
+        setupState: {},
+        props: {},
+        emit: () => {},
+        slots: {},
+        providers: {},
+        parent
     }
 
-    return component
+    instance.emit = emit.bind(null, instance) as any
+
+    return instance
 }
 
 export function setupComponent (instance) {
-    // TODO init props & slots
+    // init slots
+    initSlots(instance, instance.vnode.children)
+
+    // init props
+    initProps(instance, instance.vnode.props)
+
 
     // TODO determine stateful component OR non stateful
 
     setupStatefulComponent(instance)
+
+    const proxy = new Proxy(
+        {_: instance}, 
+        publicInstanceProxyHandlers
+    )
+
+    instance.proxy = proxy
 }
 
 function setupStatefulComponent (instance) {
     const { setup } = instance.type
 
+    setCurrentInstance(instance)
+
     if (setup) {
-        const result = setup()
-        handleSetupResult(instance, result)
+        const setupResult = setup(shallowReadonly(instance.props), { emit: instance.emit })
+        handleSetupResult(instance, setupResult)
     }
+
+    setCurrentInstance(null)
 }
 
-function handleSetupResult (instance, result) {
+function handleSetupResult (instance, setupResult) {
     // TODO determine result type, an object or a function
 
     // opt 1: object
-    if (typeof result === 'object') {
-        instance.setupState = result
+    if (typeof setupResult === 'object') {
+        instance.setupState = setupResult
     }
 
     finishComponentSetup(instance)
@@ -41,4 +73,14 @@ function finishComponentSetup (instance) {
     if (render) {
         instance.render = render
     }
+}
+
+
+let currentInstance = null
+
+export function getCurrentInstance () {
+    return currentInstance
+}
+function setCurrentInstance (instance) {
+    currentInstance = instance
 }
