@@ -31,7 +31,6 @@ export function inject (key, defaultValue) {
                 return defaultValue()
             }
             return defaultValue
-        }
-        
+        }  
     }
 }
