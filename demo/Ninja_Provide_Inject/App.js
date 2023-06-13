@@ -5,9 +5,8 @@ import { provide, inject } from "../../lib/vue-ninja.esm.js"
 const second = {
     name: 'second_component',
     setup () {
-        console.log('i am second')
-        provide('second_1', 'Info from second_1')
-        provide('second_2', 'Info from second_2')
+        // console.log('i am second')
+        provide('foo', 'Info from second')
     },
     render () {
         return h(
@@ -15,6 +14,33 @@ const second = {
             {},
             [
                 h('div',{},'second component:'),
+                h(second_semi)
+            ]
+        )
+    }
+}
+
+
+const second_semi = {
+    name: 'second_semi',
+    setup () {
+        provide('foo', 'Info from second-semi')
+        const info = inject('foo')
+        const info_1 = inject('haha', () => 'function')
+
+        return {
+            info,
+            info_1
+        }
+    },
+    render () {
+        return h(
+            'div',
+            {},
+            [
+                h('div', {}, 'semi component:'),
+                h('div', {}, 'semi inject: ' + this.info),
+                h('div',{},this.info_1),
                 h(third)
             ]
         )
@@ -25,8 +51,8 @@ const second = {
 const third = {
     name: 'third_component',
     setup () {
-        console.log('i am shird')
-        const info = inject('second_1')
+        // console.log('i am third')
+        const info = inject('foo')
         return {
             info
         }
@@ -37,7 +63,7 @@ const third = {
             {},
             [
                 h('div', {}, 'third component:'),
-                h('div',{}, 'inject info: ' + this.info)
+                h('div',{}, ' third inject info: ' + this.info)
             ]
         )
     }
@@ -47,7 +73,7 @@ const third = {
 export default {
     name: 'root_component',
     setup () {
-        console.log('i am App')
+        // console.log('i am App')
     },
     render () {
         return h('div', {}, [h(second)])

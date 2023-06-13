@@ -1,1 +1,3 @@
-export * from './runtime-core/index'
+// vue output index
+export * from './runtime-dom'
+export * from './reactivity'
