@@ -11,7 +11,7 @@ export function createApp (...args) {
 
 const renderer: any = createRenderer({
     createElement,
-    patchPros,
+    patchProp,
     insert
 })
 
@@ -21,12 +21,16 @@ function createElement (type) {
 }
 
 
-function patchPros (el, key, value) {
+function patchProp (el, key, preValue, nextValue) {
     if (isOnEvent(key)) {
         const event = key.slice(2).toLowerCase()
-        el.addEventListener(event, value)
+        el.addEventListener(event, nextValue)
     } else {
-        el.setAttribute(key, value)
+        if (nextValue === undefined || nextValue === null) {
+            el.removeAttribute(key)
+        } else {
+            el.setAttribute(key, nextValue)
+        }
     }
 }
 
@@ -34,5 +38,3 @@ function patchPros (el, key, value) {
 function insert (el, parent_container) {
     parent_container.append(el)
 }
-
-
